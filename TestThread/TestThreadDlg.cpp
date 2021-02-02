@@ -49,7 +49,6 @@ END_MESSAGE_MAP()
 
 // CTestThreadDlg 대화 상자
 
-CTestThreadDlg *pTestThead = NULL;
 
 CTestThreadDlg::CTestThreadDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_TESTTHREAD_DIALOG, pParent)
@@ -60,23 +59,27 @@ CTestThreadDlg::CTestThreadDlg(CWnd* pParent /*=nullptr*/)
 void CTestThreadDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_ED_TEST, m_ed_TEST);
+	DDX_Control(pDX, IDC_EDIT1, m_ED_test);
 }
-
 BEGIN_MESSAGE_MAP(CTestThreadDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BTN_Thread1, &CTestThreadDlg::OnBnClickedBtnThread1)
+	ON_BN_CLICKED(IDC_BTN_Shutdown1, &CTestThreadDlg::OnBnClickedBtnShutdown1)
+	ON_BN_CLICKED(IDC_BTN_Thread2, &CTestThreadDlg::OnBnClickedBtnThread2)
+	ON_BN_CLICKED(IDC_BTN_Shutdown2, &CTestThreadDlg::OnBnClickedBtnShutdown2)
 END_MESSAGE_MAP()
 
 
 // CTestThreadDlg 메시지 처리기
 
+CTestThreadDlg* pTestThead = NULL;
+
 BOOL CTestThreadDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
+	pTestThead = this;
 	// 시스템 메뉴에 "정보..." 메뉴 항목을 추가합니다.
 
 	// IDM_ABOUTBOX는 시스템 명령 범위에 있어야 합니다.
@@ -163,9 +166,13 @@ HCURSOR CTestThreadDlg::OnQueryDragIcon()
 DWORD WINAPI ThreadFunc(PVOID pvParam)
 {
 	DWORD dwResult = 0;
-	while (true)
+	CString str;
+	str = "1 번 쓰레드 \n";
+	while (pTestThead->m_bThraed1)
 	{
-		
+		//pTestThead->m_ED_test.SetWindowTextW(str);
+		pTestThead->m_ED_test.ReplaceSel(str);
+		pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
 	}
 	return (dwResult);
 }
@@ -173,9 +180,54 @@ DWORD WINAPI ThreadFunc(PVOID pvParam)
 void CTestThreadDlg::OnBnClickedBtnThread1()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_bThraed1 = true;
 	DWORD dwThreadID =1;
 	HANDLE hThread = CreateThread(NULL, 0, ThreadFunc,this,0,&dwThreadID);
 
 }
 
 
+
+
+void CTestThreadDlg::OnBnClickedBtnShutdown1()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_bThraed1 = false;
+	//::TerminateThread(ThreadFunc, -1);
+}
+
+
+
+DWORD WINAPI ThreadFunc2(PVOID pvParam)
+{
+	DWORD dwResult = 0;
+	CString str;
+	str = "2 번 쓰레드 \n";
+		//pTestThead->m_ED_test.SetWindowTextW(str);
+	pTestThead->m_ED_test.ReplaceSel(str);
+	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+	return (dwResult);
+}
+
+HANDLE hThread_2;
+void CTestThreadDlg::OnBnClickedBtnThread2()
+{
+	m_bThraed1 = true;
+	DWORD dwThreadID = 1;
+	m_bThraed2 = true;
+	while (m_bThraed2)
+	{
+//		hThread_2 = CreateThread(NULL, 0, ThreadFunc2, this, 0, &dwThreadID);
+//		Sleep(20000);
+		break;
+	}
+	hThread_2 = CreateThread(NULL, 0, ThreadFunc2, this, 0, &dwThreadID);
+}
+
+
+void CTestThreadDlg::OnBnClickedBtnShutdown2()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_bThraed2 = false;
+	::TerminateThread(ThreadFunc2, -1);
+}

@@ -33,7 +33,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedBtnThread1();
-	CEdit m_ed_TEST;
+	
+	CEdit m_ED_test;
+	afx_msg void OnBnClickedBtnShutdown1();
+	bool m_bThraed1 = false;
+	afx_msg void OnBnClickedBtnThread2();
+
+	bool m_bThraed2 = false;
+
+	afx_msg void OnBnClickedBtnShutdown2();
 };
 
 extern  CTestThreadDlg *pTestThead;
