@@ -31,6 +31,7 @@ public:
 // 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
+
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -48,7 +49,7 @@ END_MESSAGE_MAP()
 
 // CTestThreadDlg 대화 상자
 
-
+CTestThreadDlg *pTestThead = NULL;
 
 CTestThreadDlg::CTestThreadDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_TESTTHREAD_DIALOG, pParent)
@@ -59,12 +60,14 @@ CTestThreadDlg::CTestThreadDlg(CWnd* pParent /*=nullptr*/)
 void CTestThreadDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_ED_TEST, m_ed_TEST);
 }
 
 BEGIN_MESSAGE_MAP(CTestThreadDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BTN_Thread1, &CTestThreadDlg::OnBnClickedBtnThread1)
 END_MESSAGE_MAP()
 
 
@@ -121,6 +124,10 @@ void CTestThreadDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  아래 코드가 필요합니다.  문서/뷰 모델을 사용하는 MFC 애플리케이션의 경우에는
 //  프레임워크에서 이 작업을 자동으로 수행합니다.
 
+
+
+
+
 void CTestThreadDlg::OnPaint()
 {
 	if (IsIconic())
@@ -152,4 +159,23 @@ HCURSOR CTestThreadDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
+
+DWORD WINAPI ThreadFunc(PVOID pvParam)
+{
+	DWORD dwResult = 0;
+	while (true)
+	{
+		
+	}
+	return (dwResult);
+}
+
+void CTestThreadDlg::OnBnClickedBtnThread1()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	DWORD dwThreadID =1;
+	HANDLE hThread = CreateThread(NULL, 0, ThreadFunc,this,0,&dwThreadID);
+
+}
+
 

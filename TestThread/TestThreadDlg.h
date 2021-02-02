@@ -31,4 +31,9 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedBtnThread1();
+	CEdit m_ed_TEST;
 };
+
+extern  CTestThreadDlg *pTestThead;
