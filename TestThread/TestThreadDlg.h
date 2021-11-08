@@ -42,6 +42,12 @@ public:
 	bool m_bThraed2 = false;
 
 	afx_msg void OnBnClickedBtnShutdown2();
+	afx_msg void OnBnClickedBtnSleep();
+	afx_msg void OnBnClickedBtnWait();
+
+	void Wait(DWORD dwMillisecond);
+	void Wait_2(DWORD dwMillisecond);
+
 };
 
 extern  CTestThreadDlg *pTestThead;

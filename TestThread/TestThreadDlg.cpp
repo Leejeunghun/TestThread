@@ -49,6 +49,21 @@ END_MESSAGE_MAP()
 
 // CTestThreadDlg 대화 상자
 
+void Wait_3(DWORD dwMillisecond)
+{
+	MSG msg_1;
+	DWORD dwStart;
+	dwStart = GetTickCount();
+
+	while (GetTickCount() - dwStart < dwMillisecond)
+	{
+		while (PeekMessage(&msg_1, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg_1);
+			DispatchMessage(&msg_1);
+		}
+	}
+}
 
 CTestThreadDlg::CTestThreadDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_TESTTHREAD_DIALOG, pParent)
@@ -69,6 +84,8 @@ BEGIN_MESSAGE_MAP(CTestThreadDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_Shutdown1, &CTestThreadDlg::OnBnClickedBtnShutdown1)
 	ON_BN_CLICKED(IDC_BTN_Thread2, &CTestThreadDlg::OnBnClickedBtnThread2)
 	ON_BN_CLICKED(IDC_BTN_Shutdown2, &CTestThreadDlg::OnBnClickedBtnShutdown2)
+	ON_BN_CLICKED(IDC_BTN_SLEEP, &CTestThreadDlg::OnBnClickedBtnSleep)
+	ON_BN_CLICKED(IDC_BTN_WAIT, &CTestThreadDlg::OnBnClickedBtnWait)
 END_MESSAGE_MAP()
 
 
@@ -167,13 +184,16 @@ DWORD WINAPI ThreadFunc(PVOID pvParam)
 {
 	DWORD dwResult = 0;
 	CString str;
-	str = "1 번 쓰레드 \n";
-	while (pTestThead->m_bThraed1)
-	{
-		//pTestThead->m_ED_test.SetWindowTextW(str);
-		pTestThead->m_ED_test.ReplaceSel(str);
-		pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
-	}
+	str = "1 번 A \r\n";
+	pTestThead->m_ED_test.ReplaceSel(str);
+	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+
+//	Wait_3(10000);
+	Sleep(10000);
+	str = "1 번 B \r\n";
+	pTestThead->m_ED_test.ReplaceSel(str);
+	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+
 	return (dwResult);
 }
 
@@ -202,8 +222,14 @@ DWORD WINAPI ThreadFunc2(PVOID pvParam)
 {
 	DWORD dwResult = 0;
 	CString str;
-	str = "2 번 쓰레드 \n";
-		//pTestThead->m_ED_test.SetWindowTextW(str);
+
+	str = "2 번 C \r\n";
+	pTestThead->m_ED_test.ReplaceSel(str);
+	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+//	Wait_3(10000);
+	Sleep(10000);
+
+	str = "2 번 D \r\n";
 	pTestThead->m_ED_test.ReplaceSel(str);
 	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
 	return (dwResult);
@@ -230,4 +256,71 @@ void CTestThreadDlg::OnBnClickedBtnShutdown2()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	m_bThraed2 = false;
 	::TerminateThread(ThreadFunc2, -1);
+}
+
+
+void CTestThreadDlg::OnBnClickedBtnSleep()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CString str;
+	str = "1 번 A \r\n";
+	pTestThead->m_ED_test.ReplaceSel(str);
+	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+
+	Wait(10000);
+
+	str = "1 번 B \r\n";
+	pTestThead->m_ED_test.ReplaceSel(str);
+	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+
+}
+
+
+void CTestThreadDlg::OnBnClickedBtnWait()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CString str;
+	str = "2 번 C \r\n";
+	pTestThead->m_ED_test.ReplaceSel(str);
+	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+
+	Wait_2(10000);
+	str = "2 번 D \r\n";
+	pTestThead->m_ED_test.ReplaceSel(str);
+	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+}
+
+void CTestThreadDlg::Wait(DWORD dwMillisecond)
+{
+	MSG msg;
+	DWORD dwStart;
+	dwStart = GetTickCount64();
+
+	while (GetTickCount64() - dwStart < dwMillisecond)
+	{
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+}
+
+
+
+
+void CTestThreadDlg::Wait_2(DWORD dwMillisecond)
+{
+	MSG msg_1;
+	DWORD dwStart;
+	dwStart = GetTickCount();
+
+	while (GetTickCount() - dwStart < dwMillisecond)
+	{
+		while (PeekMessage(&msg_1, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg_1);
+			DispatchMessage(&msg_1);
+		}
+	}
 }
