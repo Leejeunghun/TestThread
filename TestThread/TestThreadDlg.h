@@ -4,8 +4,21 @@
 
 #pragma once
 
-
+#define MESSAGE_Thread_1 WM_USER
+#define MESSAGE_Thread_2 WM_USER+1
+#define MESSAGE_Thread_Para WM_USER+2
 // CTestThreadDlg 대화 상자
+
+typedef struct
+
+{
+	int index;
+	HANDLE param;
+}SEARCHNVTTHREADARGUMENT;
+
+
+
+
 class CTestThreadDlg : public CDialogEx
 {
 // 생성입니다.
@@ -48,6 +61,20 @@ public:
 	void Wait(DWORD dwMillisecond);
 	void Wait_2(DWORD dwMillisecond);
 
+	CWinThread* m_pThread_1;
+	CWinThread* m_pThread_2;
+
+	afx_msg void OnBnClickedButtonAfxbeginthread2();
+
+
+	LRESULT WriteThreadTest_1(WPARAM wParam, LPARAM lParam);
+
+	LRESULT WriteThreadTest_2(WPARAM wParam, LPARAM lParam);
+
+	LRESULT WriteThreadTest_1_Parameter(WPARAM wParam, LPARAM lParam);
+
+	afx_msg void OnBnClickedButtonAfxbeginthread1();
+	afx_msg void OnBnClickedButtonParameter();
 };
 
 extern  CTestThreadDlg *pTestThead;

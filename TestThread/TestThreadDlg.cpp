@@ -86,6 +86,12 @@ BEGIN_MESSAGE_MAP(CTestThreadDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_Shutdown2, &CTestThreadDlg::OnBnClickedBtnShutdown2)
 	ON_BN_CLICKED(IDC_BTN_SLEEP, &CTestThreadDlg::OnBnClickedBtnSleep)
 	ON_BN_CLICKED(IDC_BTN_WAIT, &CTestThreadDlg::OnBnClickedBtnWait)
+	ON_BN_CLICKED(IDC_BUTTON_AfxBeginThread_2, &CTestThreadDlg::OnBnClickedButtonAfxbeginthread2)
+	ON_MESSAGE(MESSAGE_Thread_1, &CTestThreadDlg::WriteThreadTest_1)
+	ON_MESSAGE(MESSAGE_Thread_2, &CTestThreadDlg::WriteThreadTest_2)
+	ON_MESSAGE(MESSAGE_Thread_Para, &CTestThreadDlg::WriteThreadTest_1_Parameter)
+	ON_BN_CLICKED(IDC_BUTTON_AfxBeginThread_1, &CTestThreadDlg::OnBnClickedButtonAfxbeginthread1)
+	ON_BN_CLICKED(IDC_BUTTON_PARAMETER, &CTestThreadDlg::OnBnClickedButtonParameter)
 END_MESSAGE_MAP()
 
 
@@ -323,4 +329,102 @@ void CTestThreadDlg::Wait_2(DWORD dwMillisecond)
 			DispatchMessage(&msg_1);
 		}
 	}
+}
+
+
+UINT ThreadTest_1(LPVOID param)
+{
+	CTestThreadDlg* pMain = (CTestThreadDlg*)param;
+
+	PostMessage(pMain->m_hWnd, MESSAGE_Thread_1, NULL, NULL);
+
+	return true;
+}
+
+
+UINT ThreadTest_1_Parameter(LPVOID param)
+{
+	SEARCHNVTTHREADARGUMENT* item = (SEARCHNVTTHREADARGUMENT*)param;
+	CTestThreadDlg* pDlg = (CTestThreadDlg*)item->param;
+
+	int n = item->index;
+
+	int* piNumber = new int(n); //new 해야함.
+
+	::PostMessage(pDlg->m_hWnd, MESSAGE_Thread_Para, (WPARAM)0, (LPARAM)piNumber);
+//	PostMessage(pDlg->m_hWnd, MESSAGE_Thread_1, NULL, NULL);
+	
+	return true;
+}
+
+UINT ThreadTest_2(LPVOID param)
+{
+	CTestThreadDlg* pMain = (CTestThreadDlg*)param;
+
+	PostMessage(pMain->m_hWnd, MESSAGE_Thread_2, NULL, NULL);
+
+	return true;
+}
+
+
+void CTestThreadDlg::OnBnClickedButtonAfxbeginthread1()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_pThread_1 = AfxBeginThread(ThreadTest_1, this);
+}
+
+
+void CTestThreadDlg::OnBnClickedButtonAfxbeginthread2()
+{
+
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_pThread_2 = AfxBeginThread(ThreadTest_2, this);
+}
+
+
+
+LRESULT CTestThreadDlg::WriteThreadTest_1(WPARAM wParam, LPARAM lParam)
+{
+	CString str;
+	str = "1 번 C \r\n";
+	m_ED_test.ReplaceSel(str);
+	m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+	return 0;
+}
+
+
+LRESULT CTestThreadDlg::WriteThreadTest_2(WPARAM wParam, LPARAM lParam)
+{
+	CString str;
+	str = "2번 C \r\n";
+	m_ED_test.ReplaceSel(str);
+	m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+	return 0;
+}
+
+LRESULT CTestThreadDlg::WriteThreadTest_1_Parameter(WPARAM wParam, LPARAM lParam)
+{
+
+	int* pstrString = (int*)lParam;
+	int strString = *pstrString;
+
+	CString str;
+	str.Format("%d \r\n", strString);
+	m_ED_test.ReplaceSel(str);
+	m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+	return 0;
+}
+
+
+
+void CTestThreadDlg::OnBnClickedButtonParameter()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	SEARCHNVTTHREADARGUMENT* test = new SEARCHNVTTHREADARGUMENT;
+	test->index = 10;
+	test->param = this;
+
+	m_pThread_1 = AfxBeginThread(ThreadTest_1_Parameter, (LPVOID)test);
+	m_pThread_1->m_bAutoDelete = FALSE;
+
 }
