@@ -95,6 +95,7 @@ BEGIN_MESSAGE_MAP(CTestThreadDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_AfxBeginThread_1, &CTestThreadDlg::OnBnClickedButtonAfxbeginthread1)
 	ON_BN_CLICKED(IDC_BUTTON_PARAMETER, &CTestThreadDlg::OnBnClickedButtonParameter)
 	ON_BN_CLICKED(IDC_BUTTON_PARAMETER_2, &CTestThreadDlg::OnBnClickedButtonParameter2)
+	ON_BN_CLICKED(IDC_BUTTON_Thread_END, &CTestThreadDlg::OnBnClickedButtonThreadEnd)
 END_MESSAGE_MAP()
 
 
@@ -368,6 +369,22 @@ UINT ThreadTest_1_Parameter(LPVOID param)
 	return true;
 }
 
+
+UINT ThreadTest_End(LPVOID param)
+{
+	SEARCHNVTTHREADARGUMENT* item = (SEARCHNVTTHREADARGUMENT*)param;
+	CTestThreadDlg* pDlg = (CTestThreadDlg*)item->param;
+
+	int n = item->index;
+
+	int* piNumber = new int(n); //new 해야함.
+
+	pDlg->TestTheadSync(n);
+	//	PostMessage(pDlg->m_hWnd, MESSAGE_Thread_1, NULL, NULL);
+
+	return true;
+}
+
 UINT ThreadTest_2_Parameter(LPVOID param)
 {
 	SEARCHNVTTHREADARGUMENT* item = (SEARCHNVTTHREADARGUMENT*)param;
@@ -507,6 +524,51 @@ void CTestThreadDlg::TestThread(int n)
 	return ;
 }
 
+void CTestThreadDlg::TestTheadSync(int n)
+{
+
+	CString str;
+	str.Format("%d \r\n", n);
+
+	if (n == 10)
+	{
+		m_flag_threadrun_1 = true;
+	}
+	else if(n == 20)
+	{
+		m_flag_threadrun_2 = true;
+	}
+
+	for (int i = 0; i < n; i++)
+	{
+		if (n == 10)
+		{
+			m_Edit_2.ReplaceSel(str);
+			m_Edit_2.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+		}
+		else
+		{
+			m_ED_test.ReplaceSel(str);
+			m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+
+		}
+
+		Wait(300);
+
+	}
+
+	if (n == 10)
+	{
+		m_flag_threadrun_1 = false;
+	}
+	else if(n == 20)
+	{
+		m_flag_threadrun_2 = false;
+	}
+
+	return;
+}
+
 
 
 
@@ -535,4 +597,56 @@ void CTestThreadDlg::OnBnClickedButtonParameter2()
 
 	m_pThread_2 = AfxBeginThread(ThreadTest_2_Parameter, (LPVOID)test_2);
 	m_pThread_2->m_bAutoDelete = FALSE;
+}
+
+
+void CTestThreadDlg::OnBnClickedButtonThreadEnd()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	SEARCHNVTTHREADARGUMENT* test = new SEARCHNVTTHREADARGUMENT;
+	test->index = 10;
+	test->param = this;
+
+	m_pThread_1 = AfxBeginThread(ThreadTest_End, (LPVOID)test);
+	m_flag_threadrun_1 == true;
+
+	SEARCHNVTTHREADARGUMENT* test_2 = new SEARCHNVTTHREADARGUMENT;
+	test_2->index = 20;
+	test_2->param = this;
+
+	m_pThread_2 = AfxBeginThread(ThreadTest_End, (LPVOID)test_2);
+	m_flag_threadrun_2 == true;
+
+	DWORD dwexitcode = 0;
+	static TCHAR szTextBuffer[4096];
+	DWORD dwErrorCode = 0;
+	/* ... */
+
+	while (1)
+	{
+		//bool result = GetExitCodeThread(m_pThread_1, &dwErrorCode);
+
+		//if (dwErrorCode == STILL_ACTIVE) {
+		//	_stprintf(szTextBuffer, TEXT("WM_USER: hThread = %08p, dwErrorCode = STILL_ACTIVE  Flag = %d \n"), m_pThread_1, result);
+		//}
+		//else {
+		//	_stprintf(szTextBuffer, TEXT("WM_USER: hThread = %08p, dwErrorCode = %08lx Flag = %d  \n"), m_pThread_1, dwErrorCode, result);
+		//}
+		//Wait(300);
+		//OutputDebugString(szTextBuffer);
+
+		if (m_flag_threadrun_1 == true || m_flag_threadrun_2 ==true ) {
+			_stprintf(szTextBuffer, TEXT("WM_USER: hThread = %08p, dwErrorCode = STILL_ACTIVE  \n"), m_pThread_1);
+			OutputDebugString(szTextBuffer);
+			Wait(300);
+		}
+		else
+		{
+			_stprintf(szTextBuffer, TEXT("WM_USER: hThread = %08p,  \n"), m_pThread_1);
+			OutputDebugString(szTextBuffer);
+			break;
+		}
+
+	}
 }

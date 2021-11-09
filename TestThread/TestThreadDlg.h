@@ -62,6 +62,8 @@ public:
 	void Wait_2(DWORD dwMillisecond);
 
 	CWinThread* m_pThread_1;
+	bool m_flag_threadrun_1;
+	bool m_flag_threadrun_2;
 	CWinThread* m_pThread_2;
 
 	afx_msg void OnBnClickedButtonAfxbeginthread2();
@@ -76,10 +78,13 @@ public:
 
 	void TestThread(int n);
 
+	void TestTheadSync(int n);
+
 	afx_msg void OnBnClickedButtonAfxbeginthread1();
 	afx_msg void OnBnClickedButtonParameter();
 	afx_msg void OnBnClickedButtonParameter2();
 	CEdit m_Edit_2;
+	afx_msg void OnBnClickedButtonThreadEnd();
 };
 
 extern  CTestThreadDlg *pTestThead;
