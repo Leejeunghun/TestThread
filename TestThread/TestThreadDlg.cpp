@@ -75,6 +75,7 @@ void CTestThreadDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT1, m_ED_test);
+	DDX_Control(pDX, IDC_EDIT2, m_Edit_2);
 }
 BEGIN_MESSAGE_MAP(CTestThreadDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
@@ -90,8 +91,10 @@ BEGIN_MESSAGE_MAP(CTestThreadDlg, CDialogEx)
 	ON_MESSAGE(MESSAGE_Thread_1, &CTestThreadDlg::WriteThreadTest_1)
 	ON_MESSAGE(MESSAGE_Thread_2, &CTestThreadDlg::WriteThreadTest_2)
 	ON_MESSAGE(MESSAGE_Thread_Para, &CTestThreadDlg::WriteThreadTest_1_Parameter)
+	ON_MESSAGE(MESSAGE_Thread_Para_2, &CTestThreadDlg::WriteThreadTest_2_Parameter)
 	ON_BN_CLICKED(IDC_BUTTON_AfxBeginThread_1, &CTestThreadDlg::OnBnClickedButtonAfxbeginthread1)
 	ON_BN_CLICKED(IDC_BUTTON_PARAMETER, &CTestThreadDlg::OnBnClickedButtonParameter)
+	ON_BN_CLICKED(IDC_BUTTON_PARAMETER_2, &CTestThreadDlg::OnBnClickedButtonParameter2)
 END_MESSAGE_MAP()
 
 
@@ -190,15 +193,19 @@ DWORD WINAPI ThreadFunc(PVOID pvParam)
 {
 	DWORD dwResult = 0;
 	CString str;
-	str = "1 번 A \r\n";
-	pTestThead->m_ED_test.ReplaceSel(str);
-	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+	while (1)
+	{
+		str = "1 번 A \r\n";
+		pTestThead->m_ED_test.ReplaceSel(str);
+		pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
 
-//	Wait_3(10000);
-	Sleep(10000);
-	str = "1 번 B \r\n";
-	pTestThead->m_ED_test.ReplaceSel(str);
-	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+	//	Wait_3(10000);
+		Sleep(1000);
+		str = "1 번 B \r\n";
+		pTestThead->m_ED_test.ReplaceSel(str);
+		pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+
+	}
 
 	return (dwResult);
 }
@@ -229,15 +236,19 @@ DWORD WINAPI ThreadFunc2(PVOID pvParam)
 	DWORD dwResult = 0;
 	CString str;
 
-	str = "2 번 C \r\n";
-	pTestThead->m_ED_test.ReplaceSel(str);
-	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
-//	Wait_3(10000);
-	Sleep(10000);
+	while (1)
+	{
+		str = "2 번 C \r\n";
+		pTestThead->m_ED_test.ReplaceSel(str);
+		pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+	//	Wait_3(10000);
+		Sleep(1000);
 
-	str = "2 번 D \r\n";
-	pTestThead->m_ED_test.ReplaceSel(str);
-	pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+		str = "2 번 D \r\n";
+		pTestThead->m_ED_test.ReplaceSel(str);
+		pTestThead->m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+
+	}
 	return (dwResult);
 }
 
@@ -351,9 +362,25 @@ UINT ThreadTest_1_Parameter(LPVOID param)
 
 	int* piNumber = new int(n); //new 해야함.
 
-	::PostMessage(pDlg->m_hWnd, MESSAGE_Thread_Para, (WPARAM)0, (LPARAM)piNumber);
+	pDlg->TestThread(n);
 //	PostMessage(pDlg->m_hWnd, MESSAGE_Thread_1, NULL, NULL);
 	
+	return true;
+}
+
+UINT ThreadTest_2_Parameter(LPVOID param)
+{
+	SEARCHNVTTHREADARGUMENT* item = (SEARCHNVTTHREADARGUMENT*)param;
+	CTestThreadDlg* pDlg = (CTestThreadDlg*)item->param;
+
+	int n = item->index;
+
+	int* piNumber = new int(n); //new 해야함.
+
+	pDlg->TestThread(n);
+
+	//	PostMessage(pDlg->m_hWnd, MESSAGE_Thread_1, NULL, NULL);
+
 	return true;
 }
 
@@ -410,10 +437,76 @@ LRESULT CTestThreadDlg::WriteThreadTest_1_Parameter(WPARAM wParam, LPARAM lParam
 
 	CString str;
 	str.Format("%d \r\n", strString);
-	m_ED_test.ReplaceSel(str);
-	m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+	while (1)
+	{
+		if (strString == 10)
+		{
+			m_Edit_2.ReplaceSel(str);
+			m_Edit_2.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+		}
+		else
+		{
+			m_ED_test.ReplaceSel(str);
+			m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+
+		}
+
+		Sleep(300);
+	}
 	return 0;
 }
+
+LRESULT CTestThreadDlg::WriteThreadTest_2_Parameter(WPARAM wParam, LPARAM lParam)
+{
+
+	int* pstrString = (int*)lParam;
+	int strString = *pstrString;
+
+	CString str;
+	str.Format("%d \r\n", strString);
+	while (1)
+	{
+		if (strString == 10)
+		{
+			m_Edit_2.ReplaceSel(str);
+			m_Edit_2.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+		}
+		else
+		{
+			m_ED_test.ReplaceSel(str);
+			m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+
+		}
+
+		Wait(300);
+	}
+	return 0;
+}
+
+void CTestThreadDlg::TestThread(int n)
+{
+
+	CString str;
+	str.Format("%d \r\n", n);
+	while (1)
+	{
+		if (n == 10)
+		{
+			m_Edit_2.ReplaceSel(str);
+			m_Edit_2.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+		}
+		else
+		{
+			m_ED_test.ReplaceSel(str);
+			m_ED_test.SetSel(-2, -1);  // 커서를 에디트박스 끝으로 이동
+
+		}
+
+		Wait(300);
+	}
+	return ;
+}
+
 
 
 
@@ -427,4 +520,19 @@ void CTestThreadDlg::OnBnClickedButtonParameter()
 	m_pThread_1 = AfxBeginThread(ThreadTest_1_Parameter, (LPVOID)test);
 	m_pThread_1->m_bAutoDelete = FALSE;
 
+
+
+
+}
+
+
+void CTestThreadDlg::OnBnClickedButtonParameter2()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	SEARCHNVTTHREADARGUMENT* test_2 = new SEARCHNVTTHREADARGUMENT;
+	test_2->index = 7;
+	test_2->param = this;
+
+	m_pThread_2 = AfxBeginThread(ThreadTest_2_Parameter, (LPVOID)test_2);
+	m_pThread_2->m_bAutoDelete = FALSE;
 }

@@ -7,10 +7,10 @@
 #define MESSAGE_Thread_1 WM_USER
 #define MESSAGE_Thread_2 WM_USER+1
 #define MESSAGE_Thread_Para WM_USER+2
+#define MESSAGE_Thread_Para_2 WM_USER+3
 // CTestThreadDlg 대화 상자
 
 typedef struct
-
 {
 	int index;
 	HANDLE param;
@@ -72,9 +72,14 @@ public:
 	LRESULT WriteThreadTest_2(WPARAM wParam, LPARAM lParam);
 
 	LRESULT WriteThreadTest_1_Parameter(WPARAM wParam, LPARAM lParam);
+	LRESULT WriteThreadTest_2_Parameter(WPARAM wParam, LPARAM lParam);
+
+	void TestThread(int n);
 
 	afx_msg void OnBnClickedButtonAfxbeginthread1();
 	afx_msg void OnBnClickedButtonParameter();
+	afx_msg void OnBnClickedButtonParameter2();
+	CEdit m_Edit_2;
 };
 
 extern  CTestThreadDlg *pTestThead;
