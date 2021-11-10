@@ -19,12 +19,13 @@
 #define IDC_BUTTON_AfxBeginThread_1     1012
 #define IDC_BUTTON_AfxBeginThread_2     1013
 #define IDC_BUTTON3                     1014
+#define IDC_BTN_Shutdown                1014
 #define IDC_BUTTON_PARAMETER            1015
 #define IDC_BUTTON_PARAMETER_2          1016
 #define IDC_EDIT2                       1017
-#define IDC_BUTTON4                     1018
 #define IDC_BUTTON_Thread_END           1018
-#define IDC_BUTTON5                     1019
+#define IDC_BTN_Clear                   1020
+#define IDC_BUTTON2                     1021
 
 // Next default values for new objects
 // 
@@ -32,7 +33,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1020
+#define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -96,6 +96,10 @@ BEGIN_MESSAGE_MAP(CTestThreadDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_PARAMETER, &CTestThreadDlg::OnBnClickedButtonParameter)
 	ON_BN_CLICKED(IDC_BUTTON_PARAMETER_2, &CTestThreadDlg::OnBnClickedButtonParameter2)
 	ON_BN_CLICKED(IDC_BUTTON_Thread_END, &CTestThreadDlg::OnBnClickedButtonThreadEnd)
+	ON_BN_CLICKED(IDC_BTN_Clear, &CTestThreadDlg::OnBnClickedBtnClear)
+
+	ON_BN_CLICKED(IDC_BUTTON2, &CTestThreadDlg::OnBnClickedButton2)
+	ON_BN_CLICKED(IDC_BTN_Shutdown, &CTestThreadDlg::OnBnClickedBtnShutdown)
 END_MESSAGE_MAP()
 
 
@@ -227,7 +231,7 @@ void CTestThreadDlg::OnBnClickedBtnShutdown1()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	m_bThraed1 = false;
-	//::TerminateThread(ThreadFunc, -1);
+	//TerminateThread(ThreadFunc, -1);
 }
 
 
@@ -370,6 +374,22 @@ UINT ThreadTest_1_Parameter(LPVOID param)
 }
 
 
+UINT ThreadTest_1_Parameter_Post(LPVOID param)
+{
+	SEARCHNVTTHREADARGUMENT* item = (SEARCHNVTTHREADARGUMENT*)param;
+	CTestThreadDlg* pDlg = (CTestThreadDlg*)item->param;
+
+	int n = item->index;
+
+	int* piNumber = new int(n); //new 해야함.
+
+//	pDlg->TestThread(n);
+//	PostMessage(pDlg->m_hWnd, MESSAGE_Thread_Para, NULL, NULL);
+	::PostMessage(pDlg->m_hWnd, MESSAGE_Thread_Para, (WPARAM)0, (LPARAM)item);      //WPARAM 핸들 또는 정수를 받아들일떄 사용     //LPARAM 포인터 전달할떄 사용하는 함수
+
+	return true;
+}
+
 UINT ThreadTest_End(LPVOID param)
 {
 	SEARCHNVTTHREADARGUMENT* item = (SEARCHNVTTHREADARGUMENT*)param;
@@ -454,7 +474,7 @@ LRESULT CTestThreadDlg::WriteThreadTest_1_Parameter(WPARAM wParam, LPARAM lParam
 
 	CString str;
 	str.Format("%d \r\n", strString);
-	while (1)
+	while (m_flag_threadrun_1)
 	{
 		if (strString == 10)
 		{
@@ -468,7 +488,7 @@ LRESULT CTestThreadDlg::WriteThreadTest_1_Parameter(WPARAM wParam, LPARAM lParam
 
 		}
 
-		Sleep(300);
+		Wait(300);
 	}
 	return 0;
 }
@@ -645,8 +665,44 @@ void CTestThreadDlg::OnBnClickedButtonThreadEnd()
 		{
 			_stprintf(szTextBuffer, TEXT("WM_USER: hThread = %08p,  \n"), m_pThread_1);
 			OutputDebugString(szTextBuffer);
+			AfxMessageBox("완료");
 			break;
 		}
 
 	}
+}
+
+
+void CTestThreadDlg::OnBnClickedBtnClear()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_Edit_2.SetSel(0, -1, TRUE);
+	m_Edit_2.Clear();
+	m_ED_test.SetSel(0, -1, TRUE);
+	m_ED_test.Clear();
+}
+
+
+
+
+void CTestThreadDlg::OnBnClickedButton2()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	SEARCHNVTTHREADARGUMENT* test = new SEARCHNVTTHREADARGUMENT;
+	test->index = 10;
+	test->param = this;
+
+	m_pThread_1 = AfxBeginThread(ThreadTest_1_Parameter_Post, (LPVOID)test); // LPVOID 란 long pointer void 형이 정해지지 않은 타비
+	m_flag_threadrun_1 = true;
+}
+
+
+void CTestThreadDlg::OnBnClickedBtnShutdown()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	m_flag_threadrun_1 = false;
+	WaitForSingleObject(m_pThread_1->m_hThread, 5000);
+	
 }

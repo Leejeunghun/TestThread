@@ -58,8 +58,8 @@ public:
 	afx_msg void OnBnClickedBtnSleep();
 	afx_msg void OnBnClickedBtnWait();
 
-	void Wait(DWORD dwMillisecond);
-	void Wait_2(DWORD dwMillisecond);
+	void Wait(DWORD dwMillisecond);                 //https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=tipsware&logNo=221651145302
+	void Wait_2(DWORD dwMillisecond);               //시스템이 시작한 지 49.7일이 지나는 시점에 오버플로가 발생하여 문제가 생기기 때문에 GetTickCount64 함수
 
 	CWinThread* m_pThread_1;
 	bool m_flag_threadrun_1;
@@ -85,6 +85,11 @@ public:
 	afx_msg void OnBnClickedButtonParameter2();
 	CEdit m_Edit_2;
 	afx_msg void OnBnClickedButtonThreadEnd();
+	afx_msg void OnBnClickedBtnClear();
+
+	bool m_isWorkingThread;
+	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedBtnShutdown();
 };
 
 extern  CTestThreadDlg *pTestThead;
